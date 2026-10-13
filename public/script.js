@@ -8,6 +8,12 @@ let activeCategory = "All";
 let cart = [];
 let toastTimer;
 
+const SHOP_EASE_SUPABASE_URL =
+  "https://bwgrpqrdqafnouwiijpi.supabase.co";
+
+const SHOP_EASE_SUPABASE_KEY =
+  "sb_publishable_yal-8Av1j4xtmEXWMJLPTg_4OghAwe2";
+
 let shopEaseSupabaseClient = null;
 let currentShopEaseUser = null;
 
@@ -53,15 +59,14 @@ function showToast(message) {
   }, 2500);
 }
 
+
 /* ==========================================
-   Load products from the Express API
+   Load products directly from Supabase
    ========================================== */
 
 async function loadProducts() {
   if (!productGrid || !emptyState || !productCount) {
-    console.error(
-      "ShopEase product HTML is missing. Check productGrid, emptyState and productCount IDs."
-    );
+    console.error("ShopEase product HTML is missing.");
     return;
   }
 
@@ -71,23 +76,28 @@ async function loadProducts() {
       Loading products...
     </p>
   `;
-
   emptyState.hidden = true;
 
   try {
-    const response = await fetch("/api/products");
-
-    if (!response.ok) {
-      throw new Error(`Products request failed: ${response.status}`);
+    if (!window.supabase?.createClient) {
+      throw new Error("Supabase browser library did not load.");
     }
 
-    const result = await response.json();
-
-    if (!result.success || !Array.isArray(result.products)) {
-      throw new Error("Invalid products response.");
+    if (!shopEaseSupabaseClient) {
+      shopEaseSupabaseClient = window.supabase.createClient(
+        SHOP_EASE_SUPABASE_URL,
+        SHOP_EASE_SUPABASE_KEY
+      );
     }
 
-    products = result.products.map((product) => ({
+    const { data, error } = await shopEaseSupabaseClient
+      .from("products")
+      .select("id, name, description, category, price, image_url, stock")
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    products = (data || []).map((product) => ({
       ...product,
       id: Number(product.id),
       price: Number(product.price),
@@ -104,7 +114,7 @@ async function loadProducts() {
     productGrid.hidden = true;
     emptyState.hidden = false;
     emptyState.textContent =
-      "Products could not be loaded. Please refresh and try again.";
+      "Products could not be loaded. Please try again later.";
 
     productCount.textContent = "Products unavailable";
   }
@@ -754,33 +764,30 @@ async function initShopEaseAuth() {
   });
 
   try {
-    const configResponse = await fetch("/api/auth-config");
-    const config = await configResponse.json();
+   
+if (!window.supabase?.createClient) {
+  throw new Error(
+    "Supabase library did not load. Check the script tags in index.html."
+  );
+}
 
-    if (!configResponse.ok || !config.success) {
-      throw new Error(
-        config.message || "Could not load authentication settings."
-      );
-    }
-
-    if (!window.supabase?.createClient) {
-      throw new Error(
-        "Supabase library did not load. Check the script tags in index.html."
-      );
-    }
-
-    supabaseClient = window.supabase.createClient(config.url, config.key);
+supabaseClient = window.supabase.createClient(
+  SHOP_EASE_SUPABASE_URL,
+  SHOP_EASE_SUPABASE_KEY
+);
 
 shopEaseSupabaseClient = supabaseClient;
-    const { data, error } = await supabaseClient.auth.getSession();
 
-    if (error) throw error;
+const { data, error } = await supabaseClient.auth.getSession();
 
-    updateUser(data.session?.user || null);
+if (error) throw error;
 
-    supabaseClient.auth.onAuthStateChange((_event, session) => {
-      updateUser(session?.user || null);
-    });
+updateUser(data.session?.user || null);
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  updateUser(session?.user || null);
+});
+
   } catch (error) {
     console.error("ShopEase authentication setup failed:", error);
 
