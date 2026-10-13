@@ -1,4 +1,4 @@
-
+﻿
 /* ==========================================
    ShopEase - Products, Search, Cart & Auth
    ========================================== */
@@ -310,7 +310,7 @@ function renderCart() {
     empty.className = "cart-empty";
 
     const emoji = document.createElement("span");
-    emoji.textContent = "🛒";
+    emoji.textContent = "ðŸ›’";
 
     const heading = document.createElement("h3");
     heading.textContent = "Your cart is waiting";
@@ -347,7 +347,7 @@ function renderCart() {
     decrease.type = "button";
     decrease.dataset.decrease = String(item.id);
     decrease.setAttribute("aria-label", "Decrease quantity");
-    decrease.textContent = "−";
+    decrease.textContent = "âˆ’";
 
     const quantity = document.createElement("span");
     quantity.textContent = String(item.quantity);
@@ -593,7 +593,7 @@ if (checkoutForm) {
 
      
 const response = await fetch(
-  `${SHOP_EASE_SUPABASE_URL}/functions/v1/place-order`,
+  `${SHOP_EASE_SUPABASE_URL}/functions/v1/clever-worker`,
   {
     method: "POST",
     headers: {
@@ -1011,3 +1011,4 @@ if (detailsAddToCart) {
     showToast("Added to your cart!");
   });
 }
+
