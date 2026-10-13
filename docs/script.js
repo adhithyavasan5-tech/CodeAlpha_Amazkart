@@ -591,21 +591,27 @@ if (checkoutForm) {
         quantity: Number(item.quantity)
       }));
 
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          customerName,
-          phone,
-          address,
-          items: orderItems
-        })
-      });
+     
+const response = await fetch(
+  `${SHOP_EASE_SUPABASE_URL}/functions/v1/place-order`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SHOP_EASE_SUPABASE_KEY,
+      "Authorization": `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({
+      customerName,
+      phone,
+      address,
+      items: orderItems
+    })
+  }
+);
 
-      const result = await response.json();
+const result = await response.json();
+
 
       if (!response.ok || !result.success) {
         throw new Error(
