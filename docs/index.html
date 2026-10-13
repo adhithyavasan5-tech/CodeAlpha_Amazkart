@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="./logo.png">
+  <title> Amazkart | Shop Smarter</title>
+  <meta
+    name="description"
+    content="Discover products you'll love at great prices with Amazkart."
+  >
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase browser library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Main JavaScript -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="#" class="logo">Amaz<span>kart.</span></a>
+
+    <div class="search-box">
+      <span aria-hidden="true">⌕</span>
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search products..."
+        aria-label="Search products"
+      >
+    </div>
+
+    <button id="authButton" class="auth-button" type="button">
+      Login / Sign up
+    </button>
+
+    <button
+      class="cart-button"
+      id="cartButton"
+      type="button"
+      aria-label="Open shopping cart"
+    >
+      🛒 Cart <span id="cartCount">0</span>
+    </button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">YOUR EVERYDAY MARKETPLACE</p>
+
+        <h1>
+          Good finds.<br>
+          <span>Great prices.</span>
+        </h1>
+
+        <p>Discover products you'll love, all in one place.</p>
+
+        <a href="#products" class="primary-button">
+          Explore products →
+        </a>
+      </div>
+
+      <div class="hero-art">
+        <div class="hero-circle"></div>
+
+        <img
+          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700"
+          alt="Red sneaker"
+        >
+
+        <span class="floating-tag">NEW ARRIVALS ✨</span>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="benefits">
+      <div>
+        🚚
+        <span>
+          <strong>Easy shopping</strong>
+          <small>Browse from anywhere</small>
+        </span>
+      </div>
+
+      <div>
+        💎
+        <span>
+          <strong>Quality picks</strong>
+          <small>Products worth loving</small>
+        </span>
+      </div>
+
+      <div>
+        🔒
+        <span>
+          <strong>Secure checkout</strong>
+          <small>Your details matter</small>
+        </span>
+      </div>
+    </section>
+
+    <!-- PRODUCT DETAILS -->
+    <section id="productDetails" class="product-details" hidden>
+      <button
+        id="backToProducts"
+        type="button"
+        class="continue-button"
+      >
+        ← Back to Home
+      </button>
+
+      <div class="product-details-content">
+        <div class="product-details-image">
+          <img id="detailsImage" src="" alt="Product image">
+        </div>
+
+        <div class="product-details-info">
+          <p id="detailsCategory" class="eyebrow"></p>
+          <h1 id="detailsName"></h1>
+          <h2 id="detailsPrice"></h2>
+          <p id="detailsDescription"></p>
+          <p id="detailsStock"></p>
+
+          <div class="details-quantity">
+            <button
+              id="detailsDecrease"
+              type="button"
+              aria-label="Decrease quantity"
+            >−</button>
+
+            <span id="detailsQuantity">1</span>
+
+            <button
+              id="detailsIncrease"
+              type="button"
+              aria-label="Increase quantity"
+            >+</button>
+          </div>
+
+          <button
+            id="detailsAddToCart"
+            class="primary-button"
+            type="button"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="products-section" id="products">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">OUR COLLECTION</p>
+          <h2>Find your favourites<span>.</span></h2>
+        </div>
+
+        <p id="productCount" class="muted"></p>
+      </div>
+
+      <!-- CATEGORY FILTERS -->
+      <div class="categories" id="categories">
+        <button class="category active" data-category="All" type="button">
+          All products
+        </button>
+
+        <button class="category" data-category="Electronics" type="button">
+          Electronics
+        </button>
+
+        <button class="category" data-category="Fashion" type="button">
+          Fashion
+        </button>
+
+        <button class="category" data-category="Home" type="button">
+          Home &amp; Living
+        </button>
+
+        <button class="category" data-category="Accessories" type="button">
+          Accessories
+        </button>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <span>🔎</span>
+        <h3>No products found</h3>
+        <p>Try another search or category.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="logo">Amaz<span>kart.</span></a>
+    <p>Making everyday shopping a little easier.</p>
+    <small>© 2026 Amazkart. Demo storefront.</small>
+  </footer>
+
+  <!-- CART OVERLAY -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- CART DRAWER -->
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+    <div class="cart-heading">
+      <div>
+        <p class="eyebrow">YOUR SELECTION</p>
+        <h2>Your cart <span id="drawerCount">(0)</span></h2>
+      </div>
+
+      <button
+        class="icon-button"
+        id="closeCart"
+        type="button"
+        aria-label="Close cart"
+      >✕</button>
+    </div>
+
+    <div id="cartItems" class="cart-items"></div>
+
+    <div class="cart-footer">
+      <div class="subtotal">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">₹0</strong>
+      </div>
+
+      <p class="muted">
+        Shipping and any applicable taxes are calculated at checkout.
+      </p>
+
+      <button
+        class="primary-button checkout-button"
+        id="checkoutButton"
+        type="button"
+      >
+        Proceed to checkout →
+      </button>
+
+      <button
+        class="continue-button"
+        id="continueShopping"
+        type="button"
+      >
+        Continue shopping
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- LOGIN / SIGNUP MODAL -->
+  <div
+    id="authModal"
+    class="auth-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="authTitle"
+    hidden
+  >
+    <div class="auth-panel">
+      <button
+        id="authClose"
+        class="auth-close"
+        type="button"
+        aria-label="Close login dialog"
+      >&times;</button>
+
+      <h2 id="authTitle">Welcome to Amazkart</h2>
+
+      <p id="authSubtitle">Sign in or create your account.</p>
+
+      <form id="authForm">
+        <label id="nameLabel" for="authName" hidden>Full name</label>
+
+        <input
+          id="authName"
+          name="name"
+          type="text"
+          placeholder="Full name"
+          autocomplete="name"
+          hidden
+        >
+
+        <label for="authEmail">Email address</label>
+
+        <input
+          id="authEmail"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        >
+
+        <label for="authPassword">Password</label>
+
+        <input
+          id="authPassword"
+          name="password"
+          type="password"
+          placeholder="At least 6 characters"
+          autocomplete="current-password"
+          minlength="6"
+          required
+        >
+
+        <button id="authSubmit" type="submit">Login</button>
+      </form>
+
+      <p id="authMessage" role="status" aria-live="polite"></p>
+
+      <button id="authToggle" class="auth-toggle" type="button">
+        New here? Create an account
+      </button>
+
+      <button id="authLogout" type="button" hidden>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL: OUTSIDE THE LOGIN MODAL -->
+  <div id="checkoutModal" class="checkout-modal" hidden>
+    <div
+      class="checkout-box"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkoutHeading"
+    >
+      <button
+        id="checkoutClose"
+        class="checkout-close"
+        type="button"
+        aria-label="Close checkout"
+      >&times;</button>
+
+      <h2 id="checkoutHeading">Delivery Details</h2>
+
+      <p>Complete your details to place your Cash on Delivery order.</p>
+
+      <p id="checkoutSummary" class="checkout-summary"></p>
+
+      <form id="checkoutForm">
+        <label for="checkoutName">Full Name</label>
+
+        <input
+          id="checkoutName"
+          name="customerName"
+          type="text"
+          maxlength="100"
+          autocomplete="name"
+          required
+        >
+
+        <label for="checkoutPhone">Phone Number</label>
+
+        <input
+          id="checkoutPhone"
+          name="phone"
+          type="tel"
+          maxlength="20"
+          autocomplete="tel"
+          required
+        >
+
+        <label for="checkoutAddress">Delivery Address</label>
+
+        <textarea
+          id="checkoutAddress"
+          name="address"
+          maxlength="1000"
+          autocomplete="street-address"
+          rows="4"
+          required
+        ></textarea>
+
+        <p><strong>Payment:</strong> Cash on Delivery (COD)</p>
+
+        <p id="checkoutMessage" role="status" aria-live="polite"></p>
+
+        <button id="placeOrderButton" type="submit">
+          Place Order
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
